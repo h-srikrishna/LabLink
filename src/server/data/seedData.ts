@@ -1,0 +1,345 @@
+import type { Booking, Equipment, ProjectAccessRequest } from '../../shared/types.js';
+
+export function formatIsoDateOffset(offsetDays: number, baseDate = new Date()): string {
+  const date = new Date(baseDate.getTime());
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() + offsetDays);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export interface SeedDataset {
+  equipment: Equipment[];
+  bookings: Booking[];
+  projectRequests: ProjectAccessRequest[];
+}
+
+export function createSeedDataset(baseDate = new Date()): SeedDataset {
+  const today = formatIsoDateOffset(0, baseDate);
+  const tomorrow = formatIsoDateOffset(1, baseDate);
+  const dayAfter = formatIsoDateOffset(2, baseDate);
+  const inFiveDays = formatIsoDateOffset(5, baseDate);
+  const inNineDays = formatIsoDateOffset(9, baseDate);
+  const inTwelveDays = formatIsoDateOffset(12, baseDate);
+  const nowIso = baseDate.toISOString();
+
+  const equipment: Equipment[] = [
+    {
+      id: 'eq-ur5e-arm',
+      name: 'UR5e 6-DOF Robotic Arm',
+      department: 'Robotics & Mechatronics',
+      labLocation: 'Engineering Hall 204',
+      category: 'Specialised Equipment',
+      description:
+        'Precision 6-axis collaborative manipulator with force-torque wrist sensing and ROS2 Humble control workstation.',
+      capabilities: ['6-DOF Manipulation', 'ROS2 Control', 'Force-Torque Sensing', 'Pick & Place'],
+      requiresFacultyApproval: true,
+      status: 'available',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 2,
+      availableUnits: 1,
+      imageUrl: '/src/assets/images/equip_robotic_arm_1795420248511.jpg',
+    },
+    {
+      id: 'eq-a100-node',
+      name: 'NVIDIA A100 Multi-GPU Compute Node',
+      department: 'Computer Science',
+      labLocation: 'Turing Center 310',
+      category: 'Lab Workstations',
+      description:
+        'Dual 80GB A100 workstation configured for PyTorch distributed training, robotics vision policies, and CUDA profiling.',
+      capabilities: ['CUDA Compute', 'Distributed Training', 'Vision Policy Fine-Tuning', 'ROS2 Control'],
+      requiresFacultyApproval: false,
+      status: 'available',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 4,
+      availableUnits: 3,
+      imageUrl: '/src/assets/images/equip_gpu_node_1795420250664.jpg',
+    },
+    {
+      id: 'eq-keysight-mso',
+      name: 'Keysight Mixed-Signal Oscilloscope',
+      department: 'Electrical Engineering',
+      labLocation: 'Maxwell Lab 112',
+      category: 'Testing & Measurement',
+      description:
+        '4-channel 1 GHz digital oscilloscope with 16 logic analyzer channels for motor driver PWM and bus debugging.',
+      capabilities: ['1 GHz Analog Capture', '16-Ch Logic Analysis', 'PWM Debugging', 'SPI/I2C Decode'],
+      requiresFacultyApproval: false,
+      status: 'available',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 6,
+      availableUnits: 5,
+      imageUrl: '/src/assets/images/equip_oscilloscope_1795420251674.jpg',
+    },
+    {
+      id: 'eq-prusa-xl',
+      name: 'Prusa XL Multi-Tool 3D Printer',
+      department: 'Mechanical Engineering',
+      labLocation: 'Forge Prototyping 105',
+      category: 'Specialised Equipment',
+      description:
+        'Five-toolhead large-volume additive fabricator supporting carbon-fiber nylon and soluble supports for custom end-effectors.',
+      capabilities: ['Multi-Material Print', 'Carbon-Fiber Nylon', 'End-Effector Prototyping', '360mm Build Volume'],
+      requiresFacultyApproval: false,
+      status: 'available',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 3,
+      availableUnits: 2,
+      imageUrl: '/src/assets/images/equip_3d_printer_1795420251140.jpg',
+    },
+    {
+      id: 'eq-pcr-cycler',
+      name: 'QuantStudio Real-Time PCR Thermal Cycler',
+      department: 'Bioengineering',
+      labLocation: 'Mendel Wet Lab 218',
+      category: 'Laboratory Instruments',
+      description:
+        '96-well optical thermal cycler for quantitative gene expression assays, primer validation, and pathogen diagnostics.',
+      capabilities: ['96-Well qPCR', 'Fluorescence Melt Curve', 'Assay Validation'],
+      requiresFacultyApproval: true,
+      status: 'restricted',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 2,
+      availableUnits: 1,
+      imageUrl: '/src/assets/images/equip_pcr_cycler_1795420251914.jpg',
+    },
+    {
+      id: 'eq-fpga-rig',
+      name: 'Zynq UltraScale+ FPGA Prototyping Kit',
+      department: 'Embedded Systems',
+      labLocation: 'Maxwell Lab 118',
+      category: 'Development Kits',
+      description:
+        'High-speed FPGA + ARM SoC development kit with SMA RF I/O and deterministic real-time EtherCAT/ROS2 motor loop support.',
+      capabilities: ['Real-Time Control Loop', 'ROS2 Control', 'High-Speed I/O', 'Hardware-in-Loop'],
+      requiresFacultyApproval: false,
+      status: 'available',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 8,
+      availableUnits: 6,
+      imageUrl: '/src/assets/images/equip_fpga_rig_1795420251388.jpg',
+    },
+    {
+      id: 'eq-hplc-system',
+      name: 'Agilent 1260 Infinity II HPLC System',
+      department: 'Chemistry',
+      labLocation: 'Curie Analytical Lab 302',
+      category: 'Laboratory Instruments',
+      description:
+        'Quaternary high-performance liquid chromatography stack with UV-Vis diode array detector for compound purity and reaction monitoring.',
+      capabilities: ['Chromatography', 'UV-Vis Detection', 'Purity Assay', 'Solvent Gradient'],
+      requiresFacultyApproval: false,
+      status: 'available',
+      openHour: 8,
+      closeHour: 20,
+      totalUnits: 2,
+      availableUnits: 1,
+      imageUrl: '/src/assets/images/equip_hplc_chemistry_1795421427617.jpg',
+    },
+  ];
+
+  const bookings: Booking[] = [
+    {
+      id: 'bk-101',
+      equipmentId: 'eq-ur5e-arm',
+      studentName: 'Maya Patel',
+      studentEmail: 'mpatel@campus.edu',
+      projectTitle: 'ME-412 Kinematics Calibration Practice',
+      projectDeadline: inNineDays,
+      requirementsSummary: 'Routine trajectory logging and waypoint verification',
+      date: today,
+      startHour: 14,
+      endHour: 16,
+      status: 'confirmed',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-102',
+      equipmentId: 'eq-ur5e-arm',
+      studentName: 'Daniel Kim',
+      studentEmail: 'dkim@campus.edu',
+      projectTitle: 'Compliant Gripper Force Loop Test',
+      projectDeadline: inFiveDays,
+      requirementsSummary: 'Force-torque sensor calibration on compliant silicone gripper',
+      date: today,
+      startHour: 10,
+      endHour: 12,
+      status: 'confirmed',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-103',
+      equipmentId: 'eq-ur5e-arm',
+      studentName: 'Elena Rostova',
+      studentEmail: 'erostova@campus.edu',
+      projectTitle: 'Autonomous Surgical Suturing Capstone',
+      projectDeadline: dayAfter,
+      requirementsSummary: '6-DOF Manipulation with Force-Torque Sensing for final demo validation',
+      date: tomorrow,
+      startHour: 11,
+      endHour: 13,
+      status: 'pending_faculty',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-104',
+      equipmentId: 'eq-a100-node',
+      studentName: 'Lucas Meyer',
+      studentEmail: 'lmeyer@campus.edu',
+      projectTitle: 'Diffusion Policy Pre-Training',
+      projectDeadline: inTwelveDays,
+      requirementsSummary: 'Dual GPU training run for visual grasp detection',
+      date: today,
+      startHour: 13,
+      endHour: 17,
+      status: 'confirmed',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-105',
+      equipmentId: 'eq-keysight-mso',
+      studentName: 'Nadia Hassan',
+      studentEmail: 'nhassan@campus.edu',
+      projectTitle: 'BLDC Inverter Gate Timing Audit',
+      projectDeadline: inFiveDays,
+      requirementsSummary: '4-channel PWM dead-time verification at 48V',
+      date: today,
+      startHour: 9,
+      endHour: 11,
+      status: 'confirmed',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-106',
+      equipmentId: 'eq-prusa-xl',
+      studentName: 'Owen Brooks',
+      studentEmail: 'obrooks@campus.edu',
+      projectTitle: 'Planetary Gearbox Housing Print',
+      projectDeadline: inNineDays,
+      requirementsSummary: 'Carbon-fiber nylon print for rover suspension mount',
+      date: today,
+      startHour: 11,
+      endHour: 15,
+      status: 'confirmed',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-107',
+      equipmentId: 'eq-pcr-cycler',
+      studentName: 'Priya Nair',
+      studentEmail: 'pnair@campus.edu',
+      projectTitle: 'Microfluidic Biosensor Primer Assay',
+      projectDeadline: tomorrow,
+      requirementsSummary: '96-well qPCR melt-curve run for senior bioengineering thesis',
+      date: tomorrow,
+      startHour: 14,
+      endHour: 16,
+      status: 'pending_faculty',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+    {
+      id: 'bk-108',
+      equipmentId: 'eq-hplc-system',
+      studentName: 'Hannah Chen',
+      studentEmail: 'hchen@campus.edu',
+      projectTitle: 'Catalyst Reaction Yield Assay',
+      projectDeadline: inFiveDays,
+      requirementsSummary: 'UV-Vis 254nm gradient elution purity check',
+      date: today,
+      startHour: 10,
+      endHour: 12,
+      status: 'confirmed',
+      createdAt: nowIso,
+      resolvedViaAi: false,
+    },
+  ];
+
+  const projectRequests: ProjectAccessRequest[] = [
+    {
+      id: 'req-201',
+      equipmentId: 'eq-ur5e-arm',
+      equipmentName: 'UR5e 6-DOF Robotic Arm',
+      labLocation: 'Engineering Hall 204',
+      linkedBookingId: 'bk-103',
+      studentName: 'Elena Rostova',
+      department: 'Biomedical Engineering',
+      projectTitle: 'Autonomous Surgical Suturing Capstone',
+      projectDescription:
+        'Closed-loop robotic needle-driving validation using real-time wrist force-torque feedback for senior biomedical capstone evaluation.',
+      projectDeadline: dayAfter,
+      equipmentRequirements: '6-DOF Manipulation, Force-Torque Sensing, ROS2 Control',
+      justification:
+        'Cross-department capstone evaluation is in 48 hours; team completed safety induction and requires wrist force-torque validation.',
+      requestedHours: 2,
+      preferredDate: tomorrow,
+      preferredStartHour: 11,
+      preferredEndHour: 13,
+      status: 'pending',
+      createdAt: nowIso,
+    },
+    {
+      id: 'req-202',
+      equipmentId: 'eq-pcr-cycler',
+      equipmentName: 'QuantStudio Real-Time PCR Thermal Cycler',
+      labLocation: 'Mendel Wet Lab 218',
+      linkedBookingId: 'bk-107',
+      studentName: 'Priya Nair',
+      department: 'Bioengineering',
+      projectTitle: 'Microfluidic Biosensor Primer Assay',
+      projectDescription:
+        'Quantitative PCR amplification and melt-curve verification of microfluidic diagnostic primer sets before reagent expiration.',
+      projectDeadline: tomorrow,
+      equipmentRequirements: '96-Well qPCR, Fluorescence Melt Curve',
+      justification:
+        'Senior thesis reagent batch expires within 36 hours; BSL-1 wet-lab clearance verified with Mendel Lab coordinator.',
+      requestedHours: 2,
+      preferredDate: tomorrow,
+      preferredStartHour: 14,
+      preferredEndHour: 16,
+      status: 'pending',
+      createdAt: nowIso,
+    },
+    {
+      id: 'req-203',
+      equipmentId: 'eq-ur5e-arm',
+      equipmentName: 'UR5e 6-DOF Robotic Arm',
+      labLocation: 'Engineering Hall 204',
+      linkedBookingId: 'bk-102',
+      studentName: 'Daniel Kim',
+      department: 'Robotics & Mechatronics',
+      projectTitle: 'Compliant Gripper Force Loop Test',
+      projectDescription:
+        'Characterization of silicone compliant gripper contact forces across fragile labware geometries under ROS2 impedance control.',
+      projectDeadline: inFiveDays,
+      equipmentRequirements: 'Force-Torque Sensing',
+      justification: 'Approved for controlled low-payload compliance benchmarking.',
+      requestedHours: 2,
+      preferredDate: today,
+      preferredStartHour: 10,
+      preferredEndHour: 12,
+      status: 'approved',
+      facultyReviewer: 'Dr. Aris Thorne',
+      facultyDecisionNote: 'Safety checklist verified; speed limit capped at 250 mm/s.',
+      reviewedAt: nowIso,
+      createdAt: nowIso,
+    },
+  ];
+
+  return { equipment, bookings, projectRequests };
+}

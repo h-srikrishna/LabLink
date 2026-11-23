@@ -1,0 +1,6 @@
+{
+  "name": "LabLink",
+  "description": "Campus laboratory resource-sharing platform with intelligent slot booking, faculty approvals, and fair AI scheduling conflict resolution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
